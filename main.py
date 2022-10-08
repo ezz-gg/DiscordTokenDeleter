@@ -60,28 +60,29 @@ def getfingerprint():
   fingerprint = r2["fingerprint"]
   return fingerprint
 
-
 def dead(token):
   headers = {
     "authorization": token
   }
   if config["proxy"] == True:
-    response = requests.post(f"https://discord.com/api/v10/invites/{random.choice(range(0,1000000))}",
+    response = requests.post(f"https://discord.com/api/v6/invites/{random.choice(range(0,1000000))}",
                              headers=headers,,
                              proxies=proxiesgen())
     if response.status_code == 200:
-      dead()
+      return
     else:
-      if "captcha_rqdata" and "captcha_key" in response.text:
-        dead()
+      if "captcha_key" in response.text:return
+      else:
+        print("[-] DeadToken : " + token)
   else:
-    response = requests.post(f"https://discord.com/api/v10/invites/{random.choice(range(0,1000000))}",
+    response = requests.post(f"https://discord.com/api/v6/invites/{random.choice(range(0,1000000))}",
                              headers=headers)
     if response.status_code == 200:
-      dead()
+      return
     else:
-      if "captcha_rqdata" and "captcha_key" in response.text:
-        dead()
+      if "captcha_key" in response.text:return
+      else:
+        print("[-] DeadToken : " + token)
   Setup()
   Start()
 
@@ -90,38 +91,26 @@ def dead(token):
 def Join(token):
   properties = '{"os":"Windows","browser":"Chrome","device":"","system_locale":"ja","browser_user_agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36","browser_version":"103.0.0.0","os_version":"10","referrer":"","referring_domain":"","search_engine":"","referrer_current":"","referring_domain_current":"","release_channel":"stable","client_build_number":139674,"client_event_source":null}'
   headers = {
-    "authorization": token,
-    "referer": "discord.com/channels/@me",
-    "sec-fetch-dest": "empty",
-    "x-debug-options": "bugReporterEnabled",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin",
-    "accept": "*/*",
-    "accept-language": "ja-JP",
-    "user-agent":
-    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.307 Chrome/78.0.3904.130 Electron/7.3.2 Safari/537.36",
-    "TE": "trailers",
-    "X-Super-Properties": base64.b64encode(properties.encode()),
+    "authorization": token
   }
-  headers["x-fingerprint"] = getfingerprint()
   if config["proxy"] == True:
-    response = requests.post(f"https://discord.com/api/v10/invites/ctkp",
+    response = requests.post(f"https://discord.com/api/v6/invites/ctkp",
                              headers=headers,
                              cookies=getcookie(),
                              proxies=proxiesgen())
     if response.status_code == 200:
-      dead()
+        while 1:threading.Thread(target=dead,args=(token,)).start()
     else:
       if "captcha_rqdata" and "captcha_key" in response.text:
-        dead(token)
+        while 1:threading.Thread(target=dead,args=(token,)).start()
   else:
-    response = requests.post(f"https://discord.com/api/v10/invites/ctkp",
+    response = requests.post(f"https://discord.com/api/v6/invites/ctkp",
                              headers=headers,
                              cookies=getcookie())
     if response.status_code == 200:
-        dead(token)
+        while 1:threading.Thread(target=dead,args=(token,)).start()
     else:
       if "captcha_rqdata" and "captcha_key" in response.text:
-        dead(token)
+        while 1:threading.Thread(target=dead,args=(token,)).start()
   Setup()
   Start()
